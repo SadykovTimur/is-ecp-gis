@@ -6,6 +6,7 @@ __all__ = ['Menu']
 
 class MenuWrapper(ComponentWrapper):
     title = Text(id="sidebar_system-name")
+    logo = Component(id="sidebar_logo")
     gos_function = Component(xpath='//div[text()=" Госуслуги и функции "]')
     info = Component(xpath='//div[text()=" Информация "]')
     settings = Component(xpath='//div[text()=" Настройки "]')
@@ -13,6 +14,7 @@ class MenuWrapper(ComponentWrapper):
     @property
     def is_visible(self) -> bool:
         assert self.title == 'Правительство Москвы'
+        assert self.logo.visible
         assert self.gos_function.visible
         assert self.info.visible
 

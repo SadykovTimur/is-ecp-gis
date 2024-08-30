@@ -1,5 +1,5 @@
-name: 'Авторизация пользователя'
-cmd: 'pytest --alluredir={allure_reports_path} tests/test_authorization.py'
+name: 'Карта 2D'
+cmd: 'pytest --alluredir={allure_reports_path} tests/test_map.py'
 steps:
   - 'Открытие стартовой страницы'
   - 'Внесение авторизационных данных, нажатие кнопки "Войти"'

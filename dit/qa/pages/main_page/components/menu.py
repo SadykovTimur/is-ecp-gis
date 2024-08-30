@@ -9,6 +9,7 @@ class MenuWrapper(ComponentWrapper):
     logo = Component(id="sidebar_logo")
     gos_function = Component(xpath='//div[text()=" Госуслуги и функции "]')
     info = Component(xpath='//div[text()=" Информация "]')
+    map = Component(xpath='//div[text()=" Карта "]')
     settings = Component(xpath='//div[text()=" Настройки "]')
 
     @property

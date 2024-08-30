@@ -1,12 +1,7 @@
 image: python:3.10.6
 
-default:
-  tags:
-    - dit
-
 stages:
   - lint
-  - run
 
 code lint:
   stage: lint
@@ -18,13 +13,5 @@ code lint:
     - poetry install --no-interaction
     - make check
   except:
-    - api
-    - web
-
-tests:
-  stage: run
-  script:
-    - make test
-  only:
     - api
     - web

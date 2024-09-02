@@ -1,8 +1,8 @@
 from coms.qa.core.helpers import wait_for
 from coms.qa.frontend.pages import Page
+from coms.qa.frontend.pages.component import Component, Components
 from coms.qa.frontend.pages.component.text import Text
 from selenium.common.exceptions import NoSuchElementException
-from coms.qa.frontend.pages.component import Component
 from selenium.webdriver import ActionChains
 
 from dit.qa.pages.map_page.components.menu import Menu
@@ -19,6 +19,7 @@ class MapPage(Page):
     right_buttons = RightButtons(css='[class*="map-buttons right"]')
     map = Component(class_name='mapboxgl-canvas')
     measure_info = Text(class_name='measure-info')
+    control_orders_charts = Components(css='[class*="render"]')
 
     @property
     def loader_is_hidden(self) -> bool:
@@ -27,16 +28,16 @@ class MapPage(Page):
         except NoSuchElementException:
             return True
 
-    def zoom_in_map(self) -> None:
+    def zoom_in_map(self, zoom: str) -> None:
         try:
-            while self.right_buttons.zoom_value != '18.4':
+            while self.right_buttons.zoom_value != zoom:
                 self.right_buttons.zoom_in.click()
         except NoSuchElementException:
             raise Exception('Увеличение масштаба карты не произошло')
 
-    def zoom_out_map(self) -> None:
+    def zoom_out_map(self, zoom: str) -> None:
         try:
-            while self.right_buttons.zoom_value != '9.4':
+            while self.right_buttons.zoom_value != zoom:
                 self.right_buttons.zoom_out.click()
         except NoSuchElementException:
             raise Exception('Уменьшение масштаба карты не произошло')
@@ -49,8 +50,9 @@ class MapPage(Page):
         except AssertionError:
             raise AssertionError('Уменьшение масштаба карты при помощи кнопки "Первоначальная позиция" не произошло')
 
-    def put_a_point_on_map(self, x: int, y: int) -> None:
-        ActionChains(self.driver).move_to_element_with_offset(self.map.webelement, x, y).click().perform()
+    def put_a_point_on_map(self, coordinates: list) -> None:
+        for point in coordinates:
+            ActionChains(self.driver).move_to_element_with_offset(self.map.webelement, point['x'], point['y']).click().perform()  # type: ignore[no-untyped-call]
 
     def check_measure_total(self) -> None:
         try:
@@ -74,4 +76,17 @@ class MapPage(Page):
 
         self.app.set_implicitly_wait(1)
         wait_for(condition, timeout=130, msg='Страница "Карта" не загружена')
+        self.app.restore_implicitly_wait()
+
+    def wait_for_loading_control_orders_charts(self) -> None:
+        def condition() -> bool:
+            try:
+                return self.control_orders_charts[0].visible
+
+            except NoSuchElementException:
+
+                return False
+
+        self.app.set_implicitly_wait(1)
+        wait_for(condition, timeout=290, msg='Слой "Контрольные поручения" не загружен')
         self.app.restore_implicitly_wait()

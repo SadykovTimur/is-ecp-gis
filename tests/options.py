@@ -10,7 +10,7 @@ def pytest_addoption(parser):
         help='A way to override the ui_url for your tests.',
         metavar='ui_url',
         default='smart-id.mos.ru/iam/auth/realms/smart/protocol/openid-connect/auth?response_type=code'
-                '&client_id=secure-login&redirect_uri=https://smart.mos.ru/main/',
+        '&client_id=secure-login&redirect_uri=https://smart.mos.ru/main/',
     )
 
     parser.addoption(

@@ -6,7 +6,7 @@ from _pytest.fixtures import FixtureRequest
 from coms.qa.fixtures.application import Application
 from coms.qa.frontend.constants import CLIENT_BROWSERS, CLIENT_DEVICE_TYPE
 
-from tests.steps import open_main_page, open_start_page, sign_in, open_map_page, select_ortophoto
+from tests.steps import open_main_page, open_map_page, open_start_page, select_ortophoto, sign_in
 
 
 @allure.epic('EKIS-MAYAK')

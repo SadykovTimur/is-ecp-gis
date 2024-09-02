@@ -1,7 +1,8 @@
 from coms.qa.core.helpers import wait_for
 from coms.qa.frontend.pages import Page
-from selenium.common.exceptions import NoSuchElementException
 from coms.qa.frontend.pages.component import Component
+from selenium.common.exceptions import NoSuchElementException
+
 from dit.qa.pages.main_page.components.header import Header
 from dit.qa.pages.main_page.components.main import Main
 from dit.qa.pages.main_page.components.menu import Menu

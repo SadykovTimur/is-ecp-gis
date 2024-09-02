@@ -15,10 +15,14 @@ __all__ = [
     'open_main_page',
     'sign_in',
     'open_map_page',
+    'zoom_by_cursor',
     'zoom_in_map',
     'zoom_out_map_to_initial_position',
     'measure_distance',
-    'select_ortophoto'
+    'measure_square',
+    'measure_perimetr',
+    'select_ortophoto',
+    'select_control_orders_layer'
 ]
 
 
@@ -84,19 +88,32 @@ def open_map_page(app: Application) -> None:
             raise e
 
 
-def zoom_in_map(app: Application) -> None:
+def zoom_in_map(app: Application, zoom_value: str) -> None:
     with allure.step('Zooming in Map'):
         try:
             page = MapPage(app)
-            page.zoom_in_map()
+            page.zoom_in_map(zoom_value)
 
-            screenshot_attach(app, 'zoom_in_page')
+            screenshot_attach(app, 'zoom_in_map')
         except Exception as e:
-            screenshot_attach(app, 'zoom_in_page_error')
+            screenshot_attach(app, 'zoom_in_map_error')
 
             raise e
 
-        page.zoom_out_map()
+        page.zoom_out_map('9.4')
+
+
+def zoom_by_cursor(app: Application) -> None:
+    with allure.step('Zooming in Map'):
+        try:
+            app.driver.execute_script("document.body.style.zoom = '1.5'")
+            sleep(5)
+
+            screenshot_attach(app, 'zoom_in_map')
+        except Exception as e:
+            screenshot_attach(app, 'zoom_in_map_error')
+
+            raise e
 
 
 def zoom_out_map_to_initial_position(app: Application) -> None:
@@ -107,22 +124,21 @@ def zoom_out_map_to_initial_position(app: Application) -> None:
 
             page.zoom_out_map_to_initial_position()
 
-            screenshot_attach(app, 'zoom_out_page')
+            screenshot_attach(app, 'zoom_out_map')
         except Exception as e:
-            screenshot_attach(app, 'zoom_out_page_error')
+            screenshot_attach(app, 'zoom_out_map_error')
 
             raise e
 
 
-def measure_distance(app: Application) -> None:
+def measure_distance(app: Application, coordinates: list) -> None:
     with allure.step('Measuring a distance'):
         try:
             page = MapPage(app)
             page.top_buttons.measure.click()
             page.top_buttons.measure_distance.click()
 
-            page.put_a_point_on_map(100, 200)
-            page.put_a_point_on_map(150, 350)
+            page.put_a_point_on_map(coordinates)
 
             page.check_measure_total()
 
@@ -131,6 +147,48 @@ def measure_distance(app: Application) -> None:
             screenshot_attach(app, 'distance_error')
 
             raise e
+
+        page.top_buttons.measure.click()
+
+
+def measure_square(app: Application, coordinates: list) -> None:
+    with allure.step('Measuring a square'):
+        try:
+            page = MapPage(app)
+            page.top_buttons.measure.click()
+            page.top_buttons.measure_square.click()
+
+            page.put_a_point_on_map(coordinates)
+
+            page.check_measure_total()
+
+            screenshot_attach(app, 'square')
+        except Exception as e:
+            screenshot_attach(app, 'square_error')
+
+            raise e
+
+        page.top_buttons.measure.click()
+
+
+def measure_perimetr(app: Application, coordinates: list) -> None:
+    with allure.step('Measuring a perimetr'):
+        try:
+            page = MapPage(app)
+            page.top_buttons.measure.click()
+            page.top_buttons.measure_perimeter.click()
+
+            page.put_a_point_on_map(coordinates)
+
+            page.check_measure_total()
+
+            screenshot_attach(app, 'perimetr')
+        except Exception as e:
+            screenshot_attach(app, 'perimetr_error')
+
+            raise e
+
+        page.top_buttons.measure.click()
 
 
 def select_ortophoto(app: Application) -> None:
@@ -145,10 +203,26 @@ def select_ortophoto(app: Application) -> None:
             
             """
 
-            sleep(10)
-
             screenshot_attach(app, 'ortophoto')
         except Exception as e:
             screenshot_attach(app, 'ortophoto_error')
+
+            raise e
+
+
+def select_control_orders_layer(app: Application, zoom_value: str) -> None:
+    with allure.step('Selecting control orders layer'):
+        try:
+            page = MapPage(app)
+            page.sidebar.layers.mayors_instructions.click()
+            page.sidebar.layers.control_orders.click()
+            page.zoom_in_map(zoom_value)
+
+            page.wait_for_loading_control_orders_charts()
+            sleep(5)
+
+            screenshot_attach(app, 'control_orders_layer')
+        except Exception as e:
+            screenshot_attach(app, 'control_orders_layer_error')
 
             raise e

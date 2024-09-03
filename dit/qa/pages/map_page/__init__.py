@@ -63,7 +63,12 @@ class MapPage(Page):
             ActionChains(self.driver).move_to_element_with_offset(self.map.webelement, point['x'], point['y']).click().perform()  # type: ignore[no-untyped-call]
 
     def activate_point_on_map(self, x: int, y: int) -> None:
-        ActionChains(self.driver).move_by_offset(x, y).click().perform()
+        ac = ActionChains(self.driver)
+        ac.move_to_element(self.right_buttons.zoom_in.webelement)  # type: ignore[no-untyped-call]
+        location = self.right_buttons.zoom_in.webelement.location
+        ac.move_by_offset(
+            x - location['x'], y - location['y']
+        ).click().perform()  # type: ignore[no-untyped-call]
 
     def check_measure_total(self) -> None:
         try:

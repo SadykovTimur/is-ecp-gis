@@ -33,4 +33,4 @@ def test_mayors_instructions(request: FixtureRequest, make_app: Callable[..., Ap
 
     select_control_orders_layer(app, '13.5')
 
-    show_control_orders_info(app, 548, 823)
+    show_control_orders_info(app, 1798, 440)

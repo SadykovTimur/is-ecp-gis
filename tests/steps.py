@@ -22,7 +22,10 @@ __all__ = [
     'measure_square',
     'measure_perimetr',
     'select_ortophoto',
-    'select_control_orders_layer'
+    'select_control_orders_layer',
+    'show_control_orders_info',
+    'open_panoramas_layer',
+    'open_panoramas_window'
 ]
 
 
@@ -217,12 +220,53 @@ def select_control_orders_layer(app: Application, zoom_value: str) -> None:
             page.sidebar.layers.mayors_instructions.click()
             page.sidebar.layers.control_orders.click()
             page.zoom_in_map(zoom_value)
-
-            page.wait_for_loading_control_orders_charts()
-            sleep(5)
+            sleep(3)
 
             screenshot_attach(app, 'control_orders_layer')
         except Exception as e:
             screenshot_attach(app, 'control_orders_layer_error')
 
             raise e
+
+
+def show_control_orders_info(app: Application, x_coord: int, y_coord: int) -> None:
+    with allure.step('Selecting control orders'):
+        try:
+            page = MapPage(app)
+            page.activate_point_on_map(x_coord, y_coord)
+
+            sleep(5)
+
+            screenshot_attach(app, 'control_orders')
+        except Exception as e:
+            screenshot_attach(app, 'control_orders_error')
+
+            raise e
+
+
+def open_panoramas_layer(app: Application) -> None:
+    try:
+        page = MapPage(app)
+        page.top_buttons.panoramas.click()
+
+        page.wait_for_loading_panoramas_layer()
+
+        screenshot_attach(app, 'panoramas_layer')
+    except Exception as e:
+        screenshot_attach(app, 'panoramas_layer_error')
+
+        raise e
+
+
+def open_panoramas_window(app: Application, x: int, y: int) -> None:
+    try:
+        page = MapPage(app)
+        page.activate_point_on_map(x, y)
+
+        page.wait_for_loading_panoramas_window()
+
+        screenshot_attach(app, 'panoramas_window')
+    except Exception as e:
+        screenshot_attach(app, 'panoramas_window_error')
+
+        raise e

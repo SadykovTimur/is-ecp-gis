@@ -1,6 +1,6 @@
 from coms.qa.core.helpers import wait_for
 from coms.qa.frontend.pages import Page
-from coms.qa.frontend.pages.component import Component, Components
+from coms.qa.frontend.pages.component import Component
 from coms.qa.frontend.pages.component.text import Text
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
@@ -19,12 +19,20 @@ class MapPage(Page):
     right_buttons = RightButtons(css='[class*="map-buttons right"]')
     map = Component(class_name='mapboxgl-canvas')
     measure_info = Text(class_name='measure-info')
-    control_orders_charts = Components(css='[class*="render"]')
+    panoramas_img = Component(class_name='imap-container')
+    panoramas_loader = Component(tag='map-core-spinner')
 
     @property
     def loader_is_hidden(self) -> bool:
         try:
             return not self.loader.visible
+        except NoSuchElementException:
+            return True
+
+    @property
+    def panoramas_loader_is_hidden(self) -> bool:
+        try:
+            return not self.panoramas_loader.visible
         except NoSuchElementException:
             return True
 
@@ -54,6 +62,9 @@ class MapPage(Page):
         for point in coordinates:
             ActionChains(self.driver).move_to_element_with_offset(self.map.webelement, point['x'], point['y']).click().perform()  # type: ignore[no-untyped-call]
 
+    def activate_point_on_map(self, x: int, y: int) -> None:
+        ActionChains(self.driver).move_by_offset(x, y).click().perform()
+
     def check_measure_total(self) -> None:
         try:
             assert self.measure_info.split(' м')[0] != '0'
@@ -78,15 +89,31 @@ class MapPage(Page):
         wait_for(condition, timeout=130, msg='Страница "Карта" не загружена')
         self.app.restore_implicitly_wait()
 
-    def wait_for_loading_control_orders_charts(self) -> None:
+    def wait_for_loading_panoramas_layer(self) -> None:
         def condition() -> bool:
             try:
-                return self.control_orders_charts[0].visible
+                return self.loader_is_hidden
 
             except NoSuchElementException:
 
                 return False
 
         self.app.set_implicitly_wait(1)
-        wait_for(condition, timeout=290, msg='Слой "Контрольные поручения" не загружен')
+        wait_for(condition, timeout=100, msg='Режим "Панорамы" не загружен')
         self.app.restore_implicitly_wait()
+
+    def wait_for_loading_panoramas_window(self) -> None:
+        def condition() -> bool:
+            try:
+                # assert self.panoramas_loader_is_hidden
+
+                return self.panoramas_img.visible
+
+            except NoSuchElementException:
+
+                return False
+
+        self.app.set_implicitly_wait(1)
+        wait_for(condition, timeout=140, msg='Окно "Панорамы" не загружено')
+        self.app.restore_implicitly_wait()
+

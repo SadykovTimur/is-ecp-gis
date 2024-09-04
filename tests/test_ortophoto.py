@@ -9,7 +9,7 @@ from coms.qa.frontend.constants import CLIENT_BROWSERS, CLIENT_DEVICE_TYPE
 from tests.steps import open_main_page, open_map_page, open_start_page, select_ortophoto, sign_in
 
 
-@allure.epic('EKIS-MAYAK')
+@allure.epic('IS-ECP-GIS')
 @allure.title('Ортофото')
 @pytest.mark.parametrize('browser', CLIENT_BROWSERS)
 @pytest.mark.parametrize('device_type', CLIENT_DEVICE_TYPE)

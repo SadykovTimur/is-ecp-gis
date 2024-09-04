@@ -16,7 +16,7 @@ from tests.steps import (
 )
 
 
-@allure.epic('EKIS-MAYAK')
+@allure.epic('IS-ECP-GIS')
 @allure.title('Панорамы')
 @pytest.mark.parametrize('browser', CLIENT_BROWSERS)
 @pytest.mark.parametrize('device_type', CLIENT_DEVICE_TYPE)
@@ -33,4 +33,4 @@ def test_panoramas(request: FixtureRequest, make_app: Callable[..., Application]
 
     open_panoramas_layer(app)
 
-    open_panoramas_window(app, 10, 20)
+    open_panoramas_window(app, 1046, 513)

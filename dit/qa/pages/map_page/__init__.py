@@ -110,7 +110,7 @@ class MapPage(Page):
     def wait_for_loading_panoramas_window(self) -> None:
         def condition() -> bool:
             try:
-                # assert self.panoramas_loader_is_hidden
+                assert self.panoramas_loader_is_hidden
 
                 return self.panoramas_img.visible
 

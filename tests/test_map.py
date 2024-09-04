@@ -21,7 +21,7 @@ from tests.steps import (
 )
 
 
-@allure.epic('EKIS-MAYAK')
+@allure.epic('IS-ECP-GIS')
 @allure.title('Карта 2D')
 @pytest.mark.parametrize('browser', CLIENT_BROWSERS)
 @pytest.mark.parametrize('device_type', CLIENT_DEVICE_TYPE)

@@ -11,16 +11,15 @@ from tests.steps import (
     open_map_page,
     open_start_page,
     sign_in,
-    select_control_orders_layer,
-    show_control_orders_info
+    open_bpla_video_layer
 )
 
 
 @allure.epic('IS-ECP-GIS')
-@allure.title('Поручения мэра')
+@allure.title('Видео с БПЛА')
 @pytest.mark.parametrize('browser', CLIENT_BROWSERS)
 @pytest.mark.parametrize('device_type', CLIENT_DEVICE_TYPE)
-def test_mayors_instructions(request: FixtureRequest, make_app: Callable[..., Application], browser: str, device_type: str) -> None:
+def test_bpla_video(request: FixtureRequest, make_app: Callable[..., Application], browser: str, device_type: str) -> None:
 
     app = make_app(browser, device_type)
 
@@ -31,6 +30,4 @@ def test_mayors_instructions(request: FixtureRequest, make_app: Callable[..., Ap
 
     open_map_page(app)
 
-    select_control_orders_layer(app, '13.5')
-
-    show_control_orders_info(app, 1798, 440)
+    open_bpla_video_layer(app)

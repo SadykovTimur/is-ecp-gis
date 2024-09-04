@@ -25,7 +25,10 @@ __all__ = [
     'select_control_orders_layer',
     'show_control_orders_info',
     'open_panoramas_layer',
-    'open_panoramas_window'
+    'open_panoramas_window',
+    'open_cameras_layer',
+    'open_bpla_video_layer',
+    'open_bpla_panoramas_layer'
 ]
 
 
@@ -220,7 +223,6 @@ def select_control_orders_layer(app: Application, zoom_value: str) -> None:
             page.sidebar.layers.mayors_instructions.click()
             page.sidebar.layers.control_orders.click()
             page.zoom_in_map(zoom_value)
-            sleep(3)
 
             screenshot_attach(app, 'control_orders_layer')
         except Exception as e:
@@ -235,8 +237,6 @@ def show_control_orders_info(app: Application, x_coord: int, y_coord: int) -> No
             page = MapPage(app)
             page.activate_point_on_map(x_coord, y_coord)
 
-            sleep(5)
-
             screenshot_attach(app, 'control_orders')
         except Exception as e:
             screenshot_attach(app, 'control_orders_error')
@@ -245,28 +245,78 @@ def show_control_orders_info(app: Application, x_coord: int, y_coord: int) -> No
 
 
 def open_panoramas_layer(app: Application) -> None:
-    try:
-        page = MapPage(app)
-        page.top_buttons.panoramas.click()
+    with allure.step('Opening panoramas layer'):
+        try:
+            page = MapPage(app)
+            page.top_buttons.panoramas.click()
 
-        page.wait_for_loading_panoramas_layer()
+            page.wait_for_loading_panoramas_layer()
 
-        screenshot_attach(app, 'panoramas_layer')
-    except Exception as e:
-        screenshot_attach(app, 'panoramas_layer_error')
+            screenshot_attach(app, 'panoramas_layer')
+        except Exception as e:
+            screenshot_attach(app, 'panoramas_layer_error')
 
-        raise e
+            raise e
 
 
 def open_panoramas_window(app: Application, x: int, y: int) -> None:
-    try:
-        page = MapPage(app)
-        page.activate_point_on_map(x, y)
+    with allure.step('Opening panoramas window'):
+        try:
+            page = MapPage(app)
+            page.activate_point_on_map(x, y)
 
-        page.wait_for_loading_panoramas_window()
+            page.wait_for_loading_panoramas_window()
 
-        screenshot_attach(app, 'panoramas_window')
-    except Exception as e:
-        screenshot_attach(app, 'panoramas_window_error')
+            screenshot_attach(app, 'panoramas_window')
+        except Exception as e:
+            screenshot_attach(app, 'panoramas_window_error')
 
-        raise e
+            raise e
+
+
+def open_cameras_layer(app: Application, zoom_value: str) -> None:
+    with allure.step('Opening cameras layer'):
+        try:
+            page = MapPage(app)
+            page.sidebar.search.send_keys('Город Москва, Красная площадь, дом 1')
+            page.sidebar.address[-1].click()
+
+            page.sidebar.layers.video_cameras.click()
+            page.sidebar.layers.contract_cameras.click()
+            page.sidebar.layers.public_places.click()
+            page.sidebar.layers.broadcast_is_on.click()
+            page.zoom_in_map(zoom_value)
+
+            screenshot_attach(app, 'cameras_layer')
+        except Exception as e:
+            screenshot_attach(app, 'cameras_layer_error')
+
+            raise e
+
+
+def open_bpla_video_layer(app: Application) -> None:
+    with allure.step('Opening BPLA video layer'):
+        try:
+            page = MapPage(app)
+            page.sidebar.layers.aerial_photography.click()
+            page.sidebar.layers.bpla_video.click()
+
+            screenshot_attach(app, 'bpla_video_layer')
+        except Exception as e:
+            screenshot_attach(app, 'bpla_video_layer_error')
+
+            raise e
+
+
+def open_bpla_panoramas_layer(app: Application) -> None:
+    with allure.step('Opening BPLA panoramas layer'):
+        try:
+            page = MapPage(app)
+            page.sidebar.layers.aerial_photography.click()
+            page.sidebar.layers.bpla_panoramas.click()
+
+            screenshot_attach(app, 'bpla_panoramas_layer')
+        except Exception as e:
+            screenshot_attach(app, 'bpla_panoramas_layer_error')
+
+            raise e

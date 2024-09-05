@@ -28,7 +28,10 @@ __all__ = [
     'open_panoramas_window',
     'open_cameras_layer',
     'open_bpla_video_layer',
-    'open_bpla_panoramas_layer'
+    'open_bpla_panoramas_layer',
+    'check_control_orders_info_options',
+    'position_map_on_object',
+    'open_object_card'
 ]
 
 
@@ -126,7 +129,7 @@ def zoom_out_map_to_initial_position(app: Application) -> None:
     with allure.step('Zooming out Map to initial position'):
         try:
             page = MapPage(app)
-            page.zoom_in_map()
+            page.zoom_in_map('18.4')
 
             page.zoom_out_map_to_initial_position()
 
@@ -235,11 +238,59 @@ def show_control_orders_info(app: Application, x_coord: int, y_coord: int) -> No
     with allure.step('Selecting control orders'):
         try:
             page = MapPage(app)
-            page.activate_point_on_map(x_coord, y_coord)
+            page.activate_object_on_map(x_coord, y_coord)
+
+            page.wait_for_loading_control_orders_info_panel()
 
             screenshot_attach(app, 'control_orders')
         except Exception as e:
             screenshot_attach(app, 'control_orders_error')
+
+            raise e
+
+
+def check_control_orders_info_options(app: Application) -> None:
+    with allure.step('Checking control orders info options'):
+        try:
+            page = MapPage(app)
+            page.control_orders_info_panel.menu.click()
+
+            page.wait_for_loading_control_orders_info_panel_options()
+
+            screenshot_attach(app, 'control_orders_info_options')
+        except Exception as e:
+            screenshot_attach(app, 'control_orders_info_options_error')
+
+            raise e
+
+
+def position_map_on_object(app: Application) -> None:
+    with allure.step('Positioning map on object'):
+        try:
+            page = MapPage(app)
+            page.control_orders_info_panel.to_object.click()
+
+            page.wait_for_positioning_map_on_object()
+
+            screenshot_attach(app, 'position_map_on_object')
+        except Exception as e:
+            screenshot_attach(app, 'position_map_on_object_error')
+
+            raise e
+
+
+def open_object_card(app: Application) -> None:
+    with allure.step('Opening object card'):
+        try:
+            page = MapPage(app)
+            page.control_orders_info_panel.object_card.click()
+
+            app.driver.switch_to.window(app.driver.window_handles[-1])
+            sleep(10)
+
+            screenshot_attach(app, 'object_card')
+        except Exception as e:
+            screenshot_attach(app, 'object_card_error')
 
             raise e
 
@@ -263,7 +314,7 @@ def open_panoramas_window(app: Application, x: int, y: int) -> None:
     with allure.step('Opening panoramas window'):
         try:
             page = MapPage(app)
-            page.activate_point_on_map(x, y)
+            page.activate_object_on_map(x, y)
 
             page.wait_for_loading_panoramas_window()
 
@@ -286,6 +337,10 @@ def open_cameras_layer(app: Application, zoom_value: str) -> None:
             page.sidebar.layers.public_places.click()
             page.sidebar.layers.broadcast_is_on.click()
             page.zoom_in_map(zoom_value)
+
+            page.activate_object_on_map(1008, 560)
+
+            sleep(10)
 
             screenshot_attach(app, 'cameras_layer')
         except Exception as e:

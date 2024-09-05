@@ -6,20 +6,16 @@ from _pytest.fixtures import FixtureRequest
 from coms.qa.fixtures.application import Application
 from coms.qa.frontend.constants import CLIENT_BROWSERS, CLIENT_DEVICE_TYPE
 
-from tests.steps import (
-    open_main_page,
-    open_map_page,
-    open_start_page,
-    sign_in,
-    open_bpla_panoramas_layer
-)
+from tests.steps import open_bpla_panoramas_layer, open_main_page, open_map_page, open_start_page, sign_in
 
 
 @allure.epic('IS-ECP-GIS')
 @allure.title('Панорамы с БПЛА')
 @pytest.mark.parametrize('browser', CLIENT_BROWSERS)
 @pytest.mark.parametrize('device_type', CLIENT_DEVICE_TYPE)
-def test_bpla_panoramas(request: FixtureRequest, make_app: Callable[..., Application], browser: str, device_type: str) -> None:
+def test_bpla_panoramas(
+    request: FixtureRequest, make_app: Callable[..., Application], browser: str, device_type: str
+) -> None:
 
     app = make_app(browser, device_type)
 

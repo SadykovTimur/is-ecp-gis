@@ -6,13 +6,7 @@ from _pytest.fixtures import FixtureRequest
 from coms.qa.fixtures.application import Application
 from coms.qa.frontend.constants import CLIENT_BROWSERS, CLIENT_DEVICE_TYPE
 
-from tests.steps import (
-    open_main_page,
-    open_map_page,
-    open_start_page,
-    sign_in,
-    open_cameras_layer
-)
+from tests.steps import open_cameras_layer, open_main_page, open_map_page, open_start_page, sign_in
 
 
 @allure.epic('IS-ECP-GIS')

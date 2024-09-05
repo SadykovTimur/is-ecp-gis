@@ -5,6 +5,7 @@ from coms.qa.frontend.pages.component.text import Text
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 
+from dit.qa.pages.map_page.components.control_orders_info_panel import ControlOrdersInfoPanel
 from dit.qa.pages.map_page.components.menu import Menu
 from dit.qa.pages.map_page.components.right_buttons import RightButtons
 from dit.qa.pages.map_page.components.top_buttons import TopButtons
@@ -21,6 +22,7 @@ class MapPage(Page):
     measure_info = Text(class_name='measure-info')
     panoramas_img = Component(class_name='imap-container')
     panoramas_loader = Component(tag='map-core-spinner')
+    control_orders_info_panel = ControlOrdersInfoPanel(css='[class*="info-results"]')
 
     @property
     def loader_is_hidden(self) -> bool:
@@ -62,13 +64,11 @@ class MapPage(Page):
         for point in coordinates:
             ActionChains(self.driver).move_to_element_with_offset(self.map.webelement, point['x'], point['y']).click().perform()  # type: ignore[no-untyped-call]
 
-    def activate_point_on_map(self, x: int, y: int) -> None:
-        ac = ActionChains(self.driver)
-        ac.move_to_element(self.right_buttons.zoom_in.webelement)  # type: ignore[no-untyped-call]
-        location = self.right_buttons.zoom_in.webelement.location
-        ac.move_by_offset(
-            x - location['x'], y - location['y']
-        ).click().perform()  # type: ignore[no-untyped-call]
+    def activate_object_on_map(self, x: int, y: int) -> None:
+        ac = ActionChains(self.driver)  # type: ignore[no-untyped-call]
+        ac.move_to_element(self.top_buttons.info.webelement)  # type: ignore[no-untyped-call]
+        location = self.top_buttons.info.webelement.location
+        ac.move_by_offset(x - location['x'], y - location['y']).click().perform()  # type: ignore[no-untyped-call]
 
     def check_measure_total(self) -> None:
         try:
@@ -122,3 +122,45 @@ class MapPage(Page):
         wait_for(condition, timeout=140, msg='Окно "Панорамы" не загружено')
         self.app.restore_implicitly_wait()
 
+    def wait_for_loading_control_orders_info_panel(self) -> None:
+        def condition() -> bool:
+            try:
+                return self.control_orders_info_panel.visible
+
+            except NoSuchElementException:
+
+                return False
+
+        self.app.set_implicitly_wait(1)
+        wait_for(condition, timeout=70, msg='Панель информации о контрольных поручениях не загружена')
+        self.app.restore_implicitly_wait()
+
+    def wait_for_loading_control_orders_info_panel_options(self) -> None:
+        def condition() -> bool:
+            try:
+                return self.control_orders_info_panel.is_visible
+
+            except NoSuchElementException:
+
+                return False
+
+        self.app.set_implicitly_wait(1)
+        wait_for(
+            condition,
+            timeout=70,
+            msg='Элементы: "Позиционировать карту на объекте", "открыть карточку объекта", "Сформировать CSV файл с координатами" недоступны',
+        )
+        self.app.restore_implicitly_wait()
+
+    def wait_for_positioning_map_on_object(self) -> None:
+        def condition() -> bool:
+            try:
+                return '18.4' == self.right_buttons.zoom_value
+
+            except AssertionError:
+
+                return False
+
+        self.app.set_implicitly_wait(1)
+        wait_for(condition, timeout=70, msg='Позиционирование карты на объекте не выполнено')
+        self.app.restore_implicitly_wait()

@@ -9,10 +9,10 @@ from coms.qa.frontend.constants import CLIENT_BROWSERS, CLIENT_DEVICE_TYPE
 from tests.steps import (
     open_main_page,
     open_map_page,
+    open_panoramas_layer,
+    open_panoramas_window,
     open_start_page,
     sign_in,
-    open_panoramas_layer,
-    open_panoramas_window
 )
 
 
@@ -20,7 +20,9 @@ from tests.steps import (
 @allure.title('Панорамы')
 @pytest.mark.parametrize('browser', CLIENT_BROWSERS)
 @pytest.mark.parametrize('device_type', CLIENT_DEVICE_TYPE)
-def test_panoramas(request: FixtureRequest, make_app: Callable[..., Application], browser: str, device_type: str) -> None:
+def test_panoramas(
+    request: FixtureRequest, make_app: Callable[..., Application], browser: str, device_type: str
+) -> None:
 
     app = make_app(browser, device_type)
 

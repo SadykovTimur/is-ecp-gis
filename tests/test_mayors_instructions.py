@@ -7,12 +7,15 @@ from coms.qa.fixtures.application import Application
 from coms.qa.frontend.constants import CLIENT_BROWSERS, CLIENT_DEVICE_TYPE
 
 from tests.steps import (
+    check_control_orders_info_options,
     open_main_page,
     open_map_page,
     open_start_page,
-    sign_in,
+    position_map_on_object,
     select_control_orders_layer,
-    show_control_orders_info
+    show_control_orders_info,
+    sign_in,
+    open_object_card
 )
 
 
@@ -20,7 +23,9 @@ from tests.steps import (
 @allure.title('Поручения мэра')
 @pytest.mark.parametrize('browser', CLIENT_BROWSERS)
 @pytest.mark.parametrize('device_type', CLIENT_DEVICE_TYPE)
-def test_mayors_instructions(request: FixtureRequest, make_app: Callable[..., Application], browser: str, device_type: str) -> None:
+def test_mayors_instructions(
+    request: FixtureRequest, make_app: Callable[..., Application], browser: str, device_type: str
+) -> None:
 
     app = make_app(browser, device_type)
 
@@ -33,4 +38,10 @@ def test_mayors_instructions(request: FixtureRequest, make_app: Callable[..., Ap
 
     select_control_orders_layer(app, '13.5')
 
-    show_control_orders_info(app, 1798, 440)
+    show_control_orders_info(app, 1781, 363)
+
+    check_control_orders_info_options(app)
+
+    position_map_on_object(app)
+
+    open_object_card(app)

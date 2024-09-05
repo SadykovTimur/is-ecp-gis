@@ -6,18 +6,18 @@ from _pytest.fixtures import FixtureRequest
 from coms.qa.fixtures.application import Application
 from coms.qa.frontend.constants import CLIENT_BROWSERS, CLIENT_DEVICE_TYPE
 
-from dit.qa.pages.coordinates import distance_coordinates, square_coordinates, perimetr_coordinates
+from dit.qa.pages.coordinates import distance_coordinates, perimetr_coordinates, square_coordinates
 from tests.steps import (
     measure_distance,
+    measure_perimetr,
+    measure_square,
     open_main_page,
     open_map_page,
     open_start_page,
     sign_in,
+    zoom_by_cursor,
     zoom_in_map,
     zoom_out_map_to_initial_position,
-    measure_square,
-    measure_perimetr,
-    zoom_by_cursor
 )
 
 

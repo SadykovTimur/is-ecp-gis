@@ -6,6 +6,7 @@ from coms.qa.fixtures.application import Application
 from coms.qa.frontend.helpers.attach_helper import screenshot_attach
 from selenium.common.exceptions import NoSuchElementException
 
+from dit.qa.pages.instructions_object_card_page import InstructionsObjectCardPage
 from dit.qa.pages.main_page import MainPage
 from dit.qa.pages.map_page import MapPage
 from dit.qa.pages.start_page import StartPage
@@ -31,7 +32,10 @@ __all__ = [
     'open_bpla_panoramas_layer',
     'check_control_orders_info_options',
     'position_map_on_object',
-    'open_object_card'
+    'open_object_card',
+    'show_video_broadcast_and_info',
+    'close_video_broadcast',
+    'show_bpla_video_info',
 ]
 
 
@@ -235,16 +239,16 @@ def select_control_orders_layer(app: Application, zoom_value: str) -> None:
 
 
 def show_control_orders_info(app: Application, x_coord: int, y_coord: int) -> None:
-    with allure.step('Selecting control orders'):
+    with allure.step('Showing control orders info'):
         try:
             page = MapPage(app)
             page.activate_object_on_map(x_coord, y_coord)
 
-            page.wait_for_loading_control_orders_info_panel()
+            page.wait_for_loading_info_panel(70, 'Информация о контрольных поручениях не загружена')
 
-            screenshot_attach(app, 'control_orders')
+            screenshot_attach(app, 'control_orders_info')
         except Exception as e:
-            screenshot_attach(app, 'control_orders_error')
+            screenshot_attach(app, 'control_orders_info_error')
 
             raise e
 
@@ -253,7 +257,7 @@ def check_control_orders_info_options(app: Application) -> None:
     with allure.step('Checking control orders info options'):
         try:
             page = MapPage(app)
-            page.control_orders_info_panel.menu.click()
+            page.info_panel.menu.click()
 
             page.wait_for_loading_control_orders_info_panel_options()
 
@@ -268,7 +272,7 @@ def position_map_on_object(app: Application) -> None:
     with allure.step('Positioning map on object'):
         try:
             page = MapPage(app)
-            page.control_orders_info_panel.to_object.click()
+            page.info_panel.to_object.click()
 
             page.wait_for_positioning_map_on_object()
 
@@ -283,10 +287,11 @@ def open_object_card(app: Application) -> None:
     with allure.step('Opening object card'):
         try:
             page = MapPage(app)
-            page.control_orders_info_panel.object_card.click()
+            page.info_panel.object_card.click()
 
             app.driver.switch_to.window(app.driver.window_handles[-1])
-            sleep(10)
+
+            InstructionsObjectCardPage(app).wait_for_loading()
 
             screenshot_attach(app, 'object_card')
         except Exception as e:
@@ -301,7 +306,7 @@ def open_panoramas_layer(app: Application) -> None:
             page = MapPage(app)
             page.top_buttons.panoramas.click()
 
-            page.wait_for_loading_panoramas_layer()
+            page.wait_for_loading_map_layer()
 
             screenshot_attach(app, 'panoramas_layer')
         except Exception as e:
@@ -338,13 +343,39 @@ def open_cameras_layer(app: Application, zoom_value: str) -> None:
             page.sidebar.layers.broadcast_is_on.click()
             page.zoom_in_map(zoom_value)
 
-            page.activate_object_on_map(1008, 560)
-
-            sleep(10)
-
             screenshot_attach(app, 'cameras_layer')
         except Exception as e:
             screenshot_attach(app, 'cameras_layer_error')
+
+            raise e
+
+
+def show_video_broadcast_and_info(app: Application, x_coord, y_coord) -> None:
+    with allure.step('Showing video broadcast and info'):
+        try:
+            page = MapPage(app)
+            page.activate_object_on_map(x_coord, y_coord)
+
+            page.wait_for_loading_video_broadcast_and_info()
+
+            screenshot_attach(app, 'video_broadcast_and_info')
+        except Exception as e:
+            screenshot_attach(app, 'video_broadcast_and_info_error')
+
+            raise e
+
+
+def close_video_broadcast(app: Application) -> None:
+    with allure.step('Closing video broadcast'):
+        try:
+            page = MapPage(app)
+            page.video_broadcast.close.click()
+
+            page.wait_for_closing_video_broadcast()
+
+            screenshot_attach(app, 'video_broadcast')
+        except Exception as e:
+            screenshot_attach(app, 'video_broadcast_error')
 
             raise e
 
@@ -356,9 +387,26 @@ def open_bpla_video_layer(app: Application) -> None:
             page.sidebar.layers.aerial_photography.click()
             page.sidebar.layers.bpla_video.click()
 
+            page.wait_for_loading_map_layer()
+
             screenshot_attach(app, 'bpla_video_layer')
         except Exception as e:
             screenshot_attach(app, 'bpla_video_layer_error')
+
+            raise e
+
+
+def show_bpla_video_info(app: Application, x_coord: int, y_coord: int) -> None:
+    with allure.step('Showing bpla video info'):
+        try:
+            page = MapPage(app)
+            page.activate_object_on_map(x_coord, y_coord)
+
+            page.wait_for_loading_info_panel(160, 'Информация о "Видео с БПЛА" не загружена')
+
+            screenshot_attach(app, 'bpla_video_info')
+        except Exception as e:
+            screenshot_attach(app, 'bpla_video_info_error')
 
             raise e
 
@@ -369,6 +417,8 @@ def open_bpla_panoramas_layer(app: Application) -> None:
             page = MapPage(app)
             page.sidebar.layers.aerial_photography.click()
             page.sidebar.layers.bpla_panoramas.click()
+
+            page.wait_for_loading_map_layer()
 
             screenshot_attach(app, 'bpla_panoramas_layer')
         except Exception as e:

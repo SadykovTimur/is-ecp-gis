@@ -6,7 +6,7 @@ from _pytest.fixtures import FixtureRequest
 from coms.qa.fixtures.application import Application
 from coms.qa.frontend.constants import CLIENT_BROWSERS, CLIENT_DEVICE_TYPE
 
-from tests.steps import open_cameras_layer, open_main_page, open_map_page, open_start_page, sign_in
+from tests.steps import open_cameras_layer, open_main_page, open_map_page, open_start_page, sign_in, show_video_broadcast_and_info, close_video_broadcast
 
 
 @allure.epic('IS-ECP-GIS')
@@ -25,3 +25,7 @@ def test_cameras(request: FixtureRequest, make_app: Callable[..., Application], 
     open_map_page(app)
 
     open_cameras_layer(app, '17.0')
+
+    show_video_broadcast_and_info(app, 1008, 560)
+
+    close_video_broadcast(app)

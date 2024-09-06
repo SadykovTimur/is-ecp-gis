@@ -1,10 +1,10 @@
 from coms.qa.frontend.pages.component import Component, ComponentWrapper
 from coms.qa.frontend.pages.component.button import Button
 
-__all__ = ['ControlOrdersInfoPanel']
+__all__ = ['InfoPanel']
 
 
-class ControlOrdersInfoPanelWrapper(ComponentWrapper):
+class InfoPanelWrapper(ComponentWrapper):
     menu = Button(css='[class*="card-menu"]')
     to_object = Button(css='[class*="to-object"]')
     object_card = Button(css='[class*="object-description"]')
@@ -18,6 +18,6 @@ class ControlOrdersInfoPanelWrapper(ComponentWrapper):
         return self.csv_file.visible
 
 
-class ControlOrdersInfoPanel(Component):
-    def __get__(self, instance, owner) -> ControlOrdersInfoPanelWrapper:
-        return ControlOrdersInfoPanelWrapper(instance.app, self.find(instance), self._locator)
+class InfoPanel(Component):
+    def __get__(self, instance, owner) -> InfoPanelWrapper:
+        return InfoPanelWrapper(instance.app, self.find(instance), self._locator)

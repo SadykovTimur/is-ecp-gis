@@ -11,14 +11,23 @@ __all__ = ['MainPage']
 
 
 class MainPage(Page):
+    loader = Component(css='[class*="loader__spiner"]')
     header = Header(tag='cdp-navbar')
     menu = Menu(tag='cdp-sidebar')
     main = Main(class_name="cdp-content")
     support = Component(class_name="support")
 
+    @property
+    def loader_is_hidden(self) -> bool:
+        try:
+            return not self.loader.visible
+        except NoSuchElementException:
+            return True
+
     def wait_for_loading(self) -> None:
         def condition() -> bool:
             try:
+                assert self.loader_is_hidden
                 assert self.header.is_visible
                 assert self.menu.is_visible
 

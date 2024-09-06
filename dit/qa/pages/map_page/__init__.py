@@ -5,10 +5,11 @@ from coms.qa.frontend.pages.component.text import Text
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 
-from dit.qa.pages.map_page.components.control_orders_info_panel import ControlOrdersInfoPanel
+from dit.qa.pages.map_page.components.info_panel import InfoPanel
 from dit.qa.pages.map_page.components.menu import Menu
 from dit.qa.pages.map_page.components.right_buttons import RightButtons
 from dit.qa.pages.map_page.components.top_buttons import TopButtons
+from dit.qa.pages.map_page.components.video_broadcast import VideoBroadcast
 
 __all__ = ['MapPage']
 
@@ -22,7 +23,8 @@ class MapPage(Page):
     measure_info = Text(class_name='measure-info')
     panoramas_img = Component(class_name='imap-container')
     panoramas_loader = Component(tag='map-core-spinner')
-    control_orders_info_panel = ControlOrdersInfoPanel(css='[class*="info-results"]')
+    info_panel = InfoPanel(css='[class*="info-results"]')
+    video_broadcast = VideoBroadcast(class_name='camera-container')
 
     @property
     def loader_is_hidden(self) -> bool:
@@ -94,7 +96,7 @@ class MapPage(Page):
         wait_for(condition, timeout=130, msg='Страница "Карта" не загружена')
         self.app.restore_implicitly_wait()
 
-    def wait_for_loading_panoramas_layer(self) -> None:
+    def wait_for_loading_map_layer(self) -> None:
         def condition() -> bool:
             try:
                 return self.loader_is_hidden
@@ -122,23 +124,23 @@ class MapPage(Page):
         wait_for(condition, timeout=140, msg='Окно "Панорамы" не загружено')
         self.app.restore_implicitly_wait()
 
-    def wait_for_loading_control_orders_info_panel(self) -> None:
+    def wait_for_loading_info_panel(self, timeout: int, msg: str) -> None:
         def condition() -> bool:
             try:
-                return self.control_orders_info_panel.visible
+                return self.info_panel.visible
 
             except NoSuchElementException:
 
                 return False
 
         self.app.set_implicitly_wait(1)
-        wait_for(condition, timeout=70, msg='Панель информации о контрольных поручениях не загружена')
+        wait_for(condition, timeout=timeout, msg=msg)
         self.app.restore_implicitly_wait()
 
     def wait_for_loading_control_orders_info_panel_options(self) -> None:
         def condition() -> bool:
             try:
-                return self.control_orders_info_panel.is_visible
+                return self.info_panel.is_visible
 
             except NoSuchElementException:
 
@@ -163,4 +165,32 @@ class MapPage(Page):
 
         self.app.set_implicitly_wait(1)
         wait_for(condition, timeout=70, msg='Позиционирование карты на объекте не выполнено')
+        self.app.restore_implicitly_wait()
+
+    def wait_for_loading_video_broadcast_and_info(self) -> None:
+        def condition() -> bool:
+            try:
+                assert self.info_panel.visible
+
+                return self.video_broadcast.visible
+
+            except AssertionError:
+
+                return False
+
+        self.app.set_implicitly_wait(1)
+        wait_for(condition, timeout=160, msg='Видеотрансляция  и информационная панель не загружены')
+        self.app.restore_implicitly_wait()
+
+    def wait_for_closing_video_broadcast(self) -> None:
+        def condition() -> bool:
+            try:
+                return not self.video_broadcast.visible
+
+            except NoSuchElementException:
+
+                return True
+
+        self.app.set_implicitly_wait(1)
+        wait_for(condition, timeout=100, msg='Окно видеотрансляции не закрыто')
         self.app.restore_implicitly_wait()

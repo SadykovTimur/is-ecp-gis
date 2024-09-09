@@ -33,5 +33,5 @@ class InstructionsObjectCardPage(Page):
                 return False
 
         self.app.set_implicitly_wait(1)
-        wait_for(condition, timeout=70, msg='Карточка объекта не загружена')
+        wait_for(condition, timeout=70, msg='Карточка объекта "Контрольные поручения" не загружена')
         self.app.restore_implicitly_wait()

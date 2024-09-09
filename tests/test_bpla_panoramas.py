@@ -6,7 +6,7 @@ from _pytest.fixtures import FixtureRequest
 from coms.qa.fixtures.application import Application
 from coms.qa.frontend.constants import CLIENT_BROWSERS, CLIENT_DEVICE_TYPE
 
-from tests.steps import open_bpla_panoramas_layer, open_main_page, open_map_page, open_start_page, sign_in
+from tests.steps import open_bpla_panoramas_layer, open_main_page, open_map_page, open_start_page, sign_in, show_bpla_panoramas_info, open_bpla_panoramas_object_card
 
 
 @allure.epic('IS-ECP-GIS')
@@ -27,3 +27,7 @@ def test_bpla_panoramas(
     open_map_page(app)
 
     open_bpla_panoramas_layer(app)
+
+    show_bpla_panoramas_info(app, 640, 815)
+
+    open_bpla_panoramas_object_card(app)

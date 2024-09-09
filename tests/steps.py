@@ -6,6 +6,7 @@ from coms.qa.fixtures.application import Application
 from coms.qa.frontend.helpers.attach_helper import screenshot_attach
 from selenium.common.exceptions import NoSuchElementException
 
+from dit.qa.pages.bpla_object_card_page import BplaObjectCardPage
 from dit.qa.pages.instructions_object_card_page import InstructionsObjectCardPage
 from dit.qa.pages.main_page import MainPage
 from dit.qa.pages.map_page import MapPage
@@ -36,6 +37,10 @@ __all__ = [
     'show_video_broadcast_and_info',
     'close_video_broadcast',
     'show_bpla_video_info',
+    'open_bpla_video_object_card',
+    'bpla_video_playback',
+    'show_bpla_panoramas_info',
+    'open_bpla_panoramas_object_card'
 ]
 
 
@@ -411,6 +416,43 @@ def show_bpla_video_info(app: Application, x_coord: int, y_coord: int) -> None:
             raise e
 
 
+def open_bpla_video_object_card(app: Application) -> None:
+    with allure.step('Opening Bpla video object card'):
+        try:
+            page = MapPage(app)
+            page.info_panel.object_card.click()
+
+            app.driver.switch_to.window(app.driver.window_handles[-1])
+
+            BplaObjectCardPage(app).wait_for_loading_bpla_video()
+
+            screenshot_attach(app, 'bpla_video_object_card')
+        except Exception as e:
+            screenshot_attach(app, 'bpla_video_object_card_error')
+
+            raise e
+
+
+def bpla_video_playback(app: Application) -> None:
+    with allure.step('Playing Bpla video'):
+        sleep(3)
+        try:
+            page = BplaObjectCardPage(app)
+            start_time = page.time.split(' / ')[0]
+            page.play.click()
+            sleep(5)
+            page.video_player.click()
+            end_time = page.time.split(' / ')[0]
+
+            page.video_playback(start_time, end_time)
+
+            screenshot_attach(app, 'bpla_video')
+        except Exception as e:
+            screenshot_attach(app, 'bpla_video_error')
+
+            raise e
+
+
 def open_bpla_panoramas_layer(app: Application) -> None:
     with allure.step('Opening BPLA panoramas layer'):
         try:
@@ -423,5 +465,49 @@ def open_bpla_panoramas_layer(app: Application) -> None:
             screenshot_attach(app, 'bpla_panoramas_layer')
         except Exception as e:
             screenshot_attach(app, 'bpla_panoramas_layer_error')
+
+            raise e
+
+
+def show_bpla_panoramas_info(app: Application, x_coord: int, y_coord: int) -> None:
+    with allure.step('Showing bpla panoramas info'):
+        try:
+            page = MapPage(app)
+            page.activate_object_on_map(x_coord, y_coord)
+
+            page.wait_for_loading_info_panel(160, 'Информация о "Панорамы 360 с БПЛА" не загружена')
+
+            screenshot_attach(app, 'bpla_panoramas_info')
+        except Exception as e:
+            screenshot_attach(app, 'bpla_panoramas_info_error')
+
+            raise e
+
+
+def open_bpla_panoramas_object_card(app: Application) -> None:
+    with allure.step('Opening Bpla panoramas object card'):
+        try:
+            page = MapPage(app)
+            page.info_panel.object_card.click()
+
+            app.driver.switch_to.window(app.driver.window_handles[-1])
+
+            BplaObjectCardPage(app).wait_for_loading_bpla_panoramas()
+
+            screenshot_attach(app, 'bpla_panoramas_object_card')
+        except Exception as e:
+            screenshot_attach(app, 'bpla_panoramas_object_card_error')
+
+            raise e
+
+
+def select_next_frame(app: Application) -> None:
+    with allure.step('Selecting next frame'):
+        try:
+            pass
+
+            screenshot_attach(app, 'next_frame')
+        except Exception as e:
+            screenshot_attach(app, 'next_frame_error')
 
             raise e

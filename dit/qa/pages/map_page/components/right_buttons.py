@@ -10,6 +10,11 @@ class RightButtonsWrapper(ComponentWrapper):
     zoom_in = Button(css='[class*="plus"]')
     zoom_out = Button(css='[class*="minus"]')
     zoom_value = Text(css='[class*="value"]')
+    orientation = Button(css='gis-plugin-compass-button svg')
+
+    @property
+    def rotate(self) -> str:
+        return self.orientation.webelement.get_attribute('style')
 
 
 class RightButtons(Component):

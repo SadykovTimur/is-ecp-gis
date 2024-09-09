@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from coms.qa.core.helpers import wait_for
 from coms.qa.frontend.pages import Page
 from coms.qa.frontend.pages.component import Component
@@ -10,6 +12,7 @@ from dit.qa.pages.map_page.components.menu import Menu
 from dit.qa.pages.map_page.components.right_buttons import RightButtons
 from dit.qa.pages.map_page.components.top_buttons import TopButtons
 from dit.qa.pages.map_page.components.video_broadcast import VideoBroadcast
+from selenium.webdriver.common.actions.mouse_button import MouseButton
 
 __all__ = ['MapPage']
 
@@ -40,6 +43,22 @@ class MapPage(Page):
         except NoSuchElementException:
             return True
 
+    def zoom_by_cursor(self, zoom_in: bool = True) -> None:
+        try:
+            ac = ActionChains(self.driver)
+
+            if zoom_in:
+                while not Decimal(self.right_buttons.zoom_value) >= Decimal('18.4'):
+                    ac.scroll_by_amount(0, -2100).perform()
+                    self.wait_loader_is_hidden()
+            else:
+                while not Decimal(self.right_buttons.zoom_value) <= Decimal('9.5'):
+                    ac.scroll_by_amount(0, 2100).perform()
+                    self.wait_loader_is_hidden()
+
+        except NoSuchElementException as e:
+            raise NoSuchElementException('Увеличение масштаба карты не произошло') from e
+
     def zoom_in_map(self, zoom: str) -> None:
         try:
             while self.right_buttons.zoom_value != zoom:
@@ -63,6 +82,17 @@ class MapPage(Page):
             raise AssertionError(
                 'Уменьшение масштаба карты при помощи кнопки "Первоначальная позиция" не произошло'
             ) from e
+
+    def change_map_orientation(self) -> None:
+        ac = ActionChains(self.driver)  # type: ignore[no-untyped-call]
+        ac.move_to_element(self.top_buttons.info.webelement)
+        ac.move_by_offset(20, 20).perform()  # type: ignore[no-untyped-call]
+
+        ac.w3c_actions.pointer_action.pointer_down(button=MouseButton.RIGHT)
+        ac.w3c_actions.key_action.pause()
+        ac.move_by_offset(-100, 50)
+        ac.w3c_actions.pointer_action.release(button=MouseButton.RIGHT)
+        ac.perform()  # type: ignore[no-untyped-call]
 
     def put_a_point_on_map(self, coordinates: list) -> None:
         for point in coordinates:
@@ -199,4 +229,48 @@ class MapPage(Page):
 
         self.app.set_implicitly_wait(1)
         wait_for(condition, timeout=100, msg='Окно видеотрансляции не закрыто')
+        self.app.restore_implicitly_wait()
+
+    def wait_loader_is_hidden(self) -> None:
+        def condition() -> bool:
+            try:
+                return self.loader_is_hidden
+
+            except NoSuchElementException:
+
+                return False
+
+        self.app.set_implicitly_wait(1)
+        wait_for(condition, msg='Карта не загружена')
+        self.app.restore_implicitly_wait()
+
+    def wait_changing_orientation(self) -> None:
+        def condition() -> bool:
+            try:
+                assert self.loader_is_hidden
+                assert "rotate" in self.right_buttons.rotate
+
+                return "rotate(0deg)" not in self.right_buttons.rotate
+
+            except NoSuchElementException:
+
+                return False
+
+        self.app.set_implicitly_wait(1)
+        wait_for(condition, msg='Ориентация карты не изменилась')
+        self.app.restore_implicitly_wait()
+
+    def wait_restore_orientation(self) -> None:
+        def condition() -> bool:
+            try:
+                assert self.loader_is_hidden
+
+                return "rotate(0deg)" in self.right_buttons.rotate
+
+            except NoSuchElementException:
+
+                return False
+
+        self.app.set_implicitly_wait(1)
+        wait_for(condition, msg='Ориентация карты не вернулась в исходное положение')
         self.app.restore_implicitly_wait()

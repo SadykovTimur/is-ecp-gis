@@ -5,6 +5,7 @@ import allure
 from coms.qa.fixtures.application import Application
 from coms.qa.frontend.helpers.attach_helper import screenshot_attach
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver import ActionChains
 
 from dit.qa.pages.bpla_object_card_page import BplaObjectCardPage
 from dit.qa.pages.instructions_object_card_page import InstructionsObjectCardPage
@@ -41,6 +42,7 @@ __all__ = [
     'bpla_video_playback',
     'show_bpla_panoramas_info',
     'open_bpla_panoramas_object_card',
+    'change_map_orientation'
 ]
 
 
@@ -111,23 +113,25 @@ def zoom_in_map(app: Application, zoom_value: str) -> None:
         try:
             page = MapPage(app)
             page.zoom_in_map(zoom_value)
-
             screenshot_attach(app, 'zoom_in_map')
+
+            page.zoom_out_map('9.4')
+            screenshot_attach(app, 'zoom_out_map')
         except Exception as e:
             screenshot_attach(app, 'zoom_in_map_error')
 
             raise e
 
-        page.zoom_out_map('9.4')
-
 
 def zoom_by_cursor(app: Application) -> None:
     with allure.step('Zooming in Map'):
         try:
-            app.driver.execute_script("document.body.style.zoom = '1.5'")
-            sleep(5)
-
+            page = MapPage(app)
+            page.zoom_by_cursor()
             screenshot_attach(app, 'zoom_in_map')
+
+            page.zoom_by_cursor(False)
+            screenshot_attach(app, 'zoom_out_map')
         except Exception as e:
             screenshot_attach(app, 'zoom_in_map_error')
 
@@ -207,6 +211,23 @@ def measure_perimetr(app: Application, coordinates: list) -> None:
             raise e
 
         page.top_buttons.measure.click()
+
+
+def change_map_orientation(app: Application) -> None:
+    with allure.step('Changing map orientation'):
+        try:
+            page = MapPage(app)
+            page.change_map_orientation()
+            page.wait_changing_orientation()
+            screenshot_attach(app, 'map_changing_orientation')
+
+            page.right_buttons.orientation.click()
+            page.wait_restore_orientation()
+            screenshot_attach(app, 'map_restore_orientation')
+        except Exception as e:
+            screenshot_attach(app, 'map_orientation_error')
+
+            raise e
 
 
 def select_ortophoto(app: Application) -> None:

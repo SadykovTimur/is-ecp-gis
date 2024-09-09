@@ -44,27 +44,32 @@ class MapPage(Page):
         try:
             while self.right_buttons.zoom_value != zoom:
                 self.right_buttons.zoom_in.click()
-        except NoSuchElementException:
-            raise Exception('Увеличение масштаба карты не произошло')
+        except NoSuchElementException as e:
+            raise NoSuchElementException('Увеличение масштаба карты не произошло') from e
 
     def zoom_out_map(self, zoom: str) -> None:
         try:
             while self.right_buttons.zoom_value != zoom:
                 self.right_buttons.zoom_out.click()
-        except NoSuchElementException:
-            raise Exception('Уменьшение масштаба карты не произошло')
+        except NoSuchElementException as e:
+            raise NoSuchElementException('Уменьшение масштаба карты не произошло') from e
 
     def zoom_out_map_to_initial_position(self) -> None:
         self.right_buttons.initial_position.click()
 
         try:
             assert self.right_buttons.zoom_value == '9.5'
-        except AssertionError:
-            raise AssertionError('Уменьшение масштаба карты при помощи кнопки "Первоначальная позиция" не произошло')
+        except AssertionError as e:
+            raise AssertionError(
+                'Уменьшение масштаба карты при помощи кнопки "Первоначальная позиция" не произошло'
+            ) from e
 
     def put_a_point_on_map(self, coordinates: list) -> None:
         for point in coordinates:
-            ActionChains(self.driver).move_to_element_with_offset(self.map.webelement, point['x'], point['y']).click().perform()  # type: ignore[no-untyped-call]
+            ac = ActionChains(self.driver)  # type: ignore[no-untyped-call]
+            ac.move_to_element_with_offset(
+                self.map.webelement, point['x'], point['y']
+            ).click().perform()  # type: ignore[no-untyped-call]
 
     def activate_object_on_map(self, x: int, y: int) -> None:
         ac = ActionChains(self.driver)  # type: ignore[no-untyped-call]
@@ -75,8 +80,8 @@ class MapPage(Page):
     def check_measure_total(self) -> None:
         try:
             assert self.measure_info.split(' м')[0] != '0'
-        except (AssertionError, NoSuchElementException):
-            raise Exception('Измерение величины не выполнилось')
+        except AssertionError as e:
+            raise AssertionError('Измерение величины не выполнилось') from e
 
     def wait_for_loading(self) -> None:
         def condition() -> bool:
@@ -150,7 +155,8 @@ class MapPage(Page):
         wait_for(
             condition,
             timeout=70,
-            msg='Элементы: "Позиционировать карту на объекте", "открыть карточку объекта", "Сформировать CSV файл с координатами" недоступны',
+            msg='Элементы: "Позиционировать карту на объекте", '
+            '"открыть карточку объекта", "Сформировать CSV файл с координатами" недоступны',
         )
         self.app.restore_implicitly_wait()
 

@@ -6,7 +6,16 @@ from _pytest.fixtures import FixtureRequest
 from coms.qa.fixtures.application import Application
 from coms.qa.frontend.constants import CLIENT_BROWSERS, CLIENT_DEVICE_TYPE
 
-from tests.steps import open_bpla_video_layer, open_main_page, open_map_page, open_start_page, sign_in, show_bpla_video_info, open_bpla_video_object_card, bpla_video_playback
+from tests.steps import (
+    bpla_video_playback,
+    open_bpla_video_layer,
+    open_bpla_video_object_card,
+    open_main_page,
+    open_map_page,
+    open_start_page,
+    show_bpla_video_info,
+    sign_in,
+)
 
 
 @allure.epic('IS-ECP-GIS')

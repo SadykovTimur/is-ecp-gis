@@ -33,8 +33,8 @@ class BplaObjectCardPage(Page):
         try:
             assert end_time > start_time
 
-        except AssertionError:
-            raise AssertionError('При воспроизведении видео возникла ошибка')
+        except AssertionError as e:
+            raise AssertionError('При воспроизведении видео возникла ошибка') from e
 
     def wait_for_loading_bpla_video(self) -> None:
         def condition() -> bool:

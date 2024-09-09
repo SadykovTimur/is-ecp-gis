@@ -1,5 +1,5 @@
 from time import sleep
-from typing import List
+from typing import Dict, List
 
 import allure
 from coms.qa.fixtures.application import Application
@@ -40,7 +40,7 @@ __all__ = [
     'open_bpla_video_object_card',
     'bpla_video_playback',
     'show_bpla_panoramas_info',
-    'open_bpla_panoramas_object_card'
+    'open_bpla_panoramas_object_card',
 ]
 
 
@@ -149,7 +149,7 @@ def zoom_out_map_to_initial_position(app: Application) -> None:
             raise e
 
 
-def measure_distance(app: Application, coordinates: list) -> None:
+def measure_distance(app: Application, coordinates: List[Dict[str, int]]) -> None:
     with allure.step('Measuring a distance'):
         try:
             page = MapPage(app)
@@ -216,10 +216,7 @@ def select_ortophoto(app: Application) -> None:
             page.sidebar.interface.click()
             page.sidebar.orthophoto.click()
 
-            """
-            Как-то тут проверить, что подложка изменилась
-            
-            """
+            # Как-то тут проверить, что подложка изменилась
 
             screenshot_attach(app, 'ortophoto')
         except Exception as e:
@@ -504,7 +501,7 @@ def open_bpla_panoramas_object_card(app: Application) -> None:
 def select_next_frame(app: Application) -> None:
     with allure.step('Selecting next frame'):
         try:
-            pass
+            #  как-то переключить кадр
 
             screenshot_attach(app, 'next_frame')
         except Exception as e:

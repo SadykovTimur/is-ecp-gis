@@ -3,7 +3,6 @@ from coms.qa.frontend.pages import Page
 from coms.qa.frontend.pages.component import Component
 from selenium.common.exceptions import NoSuchElementException
 
-
 __all__ = ['InstructionsObjectCardPage']
 
 

@@ -10,12 +10,12 @@ from tests.steps import (
     check_control_orders_info_options,
     open_main_page,
     open_map_page,
+    open_object_card,
     open_start_page,
     position_map_on_object,
     select_control_orders_layer,
     show_control_orders_info,
     sign_in,
-    open_object_card
 )
 
 

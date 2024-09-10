@@ -2,7 +2,12 @@
 name = "dit-qa-is-ecp-gis"
 version = "0.1.0"
 description = "Autotests for IS-ECP-GIS"
-authors = ["Seregin Andrey <a.seregin@coms.ru>", "Sadykov Timur <t.sadykov@coms.ru>", "Susharin Ilya <i.susharin@coms.ru>"]
+authors = [
+    "Seregin Andrey <a.seregin@coms.ru>",
+    "Sadykov Timur <t.sadykov@coms.ru>",
+    "Susharin Ilya <i.susharin@coms.ru>",
+    "Sergey Polyakov <s.polyakov@coms.ru>"
+]
 
 packages = [
     { include = "dit" }

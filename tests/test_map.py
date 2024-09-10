@@ -8,6 +8,7 @@ from coms.qa.frontend.constants import CLIENT_BROWSERS, CLIENT_DEVICE_TYPE
 
 from dit.qa.pages.coordinates import distance_coordinates, perimetr_coordinates, square_coordinates
 from tests.steps import (
+    change_map_orientation,
     measure_distance,
     measure_perimetr,
     measure_square,
@@ -18,7 +19,6 @@ from tests.steps import (
     zoom_by_cursor,
     zoom_in_map,
     zoom_out_map_to_initial_position,
-    change_map_orientation
 )
 
 
@@ -37,16 +37,16 @@ def test_map(request: FixtureRequest, make_app: Callable[..., Application], brow
 
     open_map_page(app)
 
+    zoom_by_cursor(app)
+
+    zoom_in_map(app, '18.4')
+
+    zoom_out_map_to_initial_position(app)
+
     change_map_orientation(app)
 
-    # zoom_by_cursor(app)
+    measure_distance(app, distance_coordinates)
 
-    # zoom_in_map(app, '18.4')
-    #
-    # zoom_out_map_to_initial_position(app)
-    #
-    # measure_distance(app, distance_coordinates)
-    #
-    # measure_square(app, square_coordinates)
-    #
-    # measure_perimetr(app, perimetr_coordinates)
+    measure_square(app, square_coordinates)
+
+    measure_perimetr(app, perimetr_coordinates)

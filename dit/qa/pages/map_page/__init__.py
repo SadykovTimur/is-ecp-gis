@@ -6,13 +6,13 @@ from coms.qa.frontend.pages.component import Component
 from coms.qa.frontend.pages.component.text import Text
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.actions.mouse_button import MouseButton
 
 from dit.qa.pages.map_page.components.info_panel import InfoPanel
 from dit.qa.pages.map_page.components.menu import Menu
 from dit.qa.pages.map_page.components.right_buttons import RightButtons
 from dit.qa.pages.map_page.components.top_buttons import TopButtons
 from dit.qa.pages.map_page.components.video_broadcast import VideoBroadcast
-from selenium.webdriver.common.actions.mouse_button import MouseButton
 
 __all__ = ['MapPage']
 
@@ -33,6 +33,7 @@ class MapPage(Page):
     def loader_is_hidden(self) -> bool:
         try:
             return not self.loader.visible
+
         except NoSuchElementException:
             return True
 
@@ -40,12 +41,13 @@ class MapPage(Page):
     def panoramas_loader_is_hidden(self) -> bool:
         try:
             return not self.panoramas_loader.visible
+
         except NoSuchElementException:
             return True
 
     def zoom_by_cursor(self, zoom_in: bool = True) -> None:
         try:
-            ac = ActionChains(self.driver)
+            ac = ActionChains(self.driver)  # type: ignore[no-untyped-call]
 
             if zoom_in:
                 while not Decimal(self.right_buttons.zoom_value) >= Decimal('18.4'):
@@ -61,15 +63,19 @@ class MapPage(Page):
 
     def zoom_in_map(self, zoom: str) -> None:
         try:
-            while self.right_buttons.zoom_value != zoom:
+            while not self.right_buttons.zoom_value >= zoom:
                 self.right_buttons.zoom_in.click()
+                self.wait_loader_is_hidden()
+
         except NoSuchElementException as e:
             raise NoSuchElementException('Увеличение масштаба карты не произошло') from e
 
     def zoom_out_map(self, zoom: str) -> None:
         try:
-            while self.right_buttons.zoom_value != zoom:
+            while not self.right_buttons.zoom_value <= zoom:
                 self.right_buttons.zoom_out.click()
+                self.wait_loader_is_hidden()
+
         except NoSuchElementException as e:
             raise NoSuchElementException('Уменьшение масштаба карты не произошло') from e
 
@@ -78,6 +84,7 @@ class MapPage(Page):
 
         try:
             assert self.right_buttons.zoom_value == '9.5'
+
         except AssertionError as e:
             raise AssertionError(
                 'Уменьшение масштаба карты при помощи кнопки "Первоначальная позиция" не произошло'
@@ -85,12 +92,12 @@ class MapPage(Page):
 
     def change_map_orientation(self) -> None:
         ac = ActionChains(self.driver)  # type: ignore[no-untyped-call]
-        ac.move_to_element(self.top_buttons.info.webelement)
+        ac.move_to_element(self.top_buttons.info.webelement)  # type: ignore[no-untyped-call]
         ac.move_by_offset(20, 20).perform()  # type: ignore[no-untyped-call]
 
         ac.w3c_actions.pointer_action.pointer_down(button=MouseButton.RIGHT)
         ac.w3c_actions.key_action.pause()
-        ac.move_by_offset(-100, 50)
+        ac.move_by_offset(-100, 50)  # type: ignore[no-untyped-call]
         ac.w3c_actions.pointer_action.release(button=MouseButton.RIGHT)
         ac.perform()  # type: ignore[no-untyped-call]
 
@@ -110,6 +117,7 @@ class MapPage(Page):
     def check_measure_total(self) -> None:
         try:
             assert self.measure_info.split(' м')[0] != '0'
+
         except AssertionError as e:
             raise AssertionError('Измерение величины не выполнилось') from e
 

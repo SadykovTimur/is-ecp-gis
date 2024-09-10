@@ -12,6 +12,7 @@ from tests.steps import (
     open_main_page,
     open_map_page,
     open_start_page,
+    select_next_frame,
     show_bpla_panoramas_info,
     sign_in,
 )
@@ -39,3 +40,5 @@ def test_bpla_panoramas(
     show_bpla_panoramas_info(app, 640, 815)
 
     open_bpla_panoramas_object_card(app)
+
+    select_next_frame(app)

@@ -44,4 +44,6 @@ def test_mayors_instructions(
 
     position_map_on_object(app)
 
+    check_control_orders_info_options(app)
+
     open_object_card(app)

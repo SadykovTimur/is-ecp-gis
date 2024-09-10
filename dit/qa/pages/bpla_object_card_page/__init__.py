@@ -1,3 +1,6 @@
+import re
+from decimal import Decimal
+
 from coms.qa.core.helpers import wait_for
 from coms.qa.frontend.pages import Page
 from coms.qa.frontend.pages.component import Component
@@ -20,6 +23,8 @@ class BplaObjectCardPage(Page):
     controls = Component(css='[class*="controls"]')
     play = Button(css='[class*="start"]')
     time = Text(tag='time')
+    right_arrow = Button(xpath='//div[@id="krpanoSWFObject"]/div[1]/div[2]/div[5]/div[3]/div/div[4]/div[2]')
+    opacity = Component(xpath='//div[@id="krpanoSWFObject"]/div[1]/div[2]/div[5]/div[3]/div/div[4]/div[2]')
 
     @property
     def loader_is_hidden(self) -> bool:
@@ -35,6 +40,16 @@ class BplaObjectCardPage(Page):
 
         except AssertionError as e:
             raise AssertionError('При воспроизведении видео возникла ошибка') from e
+
+    @staticmethod
+    def check_frame_movement(opacity: str) -> None:
+        try:
+            result = re.search(r'opacity: [\d.]+', opacity)
+
+            assert Decimal(result.group(0).split(': ')[1]) != 0  # type: ignore[union-attr]
+
+        except AssertionError as e:
+            raise AssertionError('Смена кадра не произошла') from e
 
     def wait_for_loading_bpla_video(self) -> None:
         def condition() -> bool:

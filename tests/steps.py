@@ -42,7 +42,8 @@ __all__ = [
     'bpla_video_playback',
     'show_bpla_panoramas_info',
     'open_bpla_panoramas_object_card',
-    'change_map_orientation'
+    'change_map_orientation',
+    'select_next_frame',
 ]
 
 
@@ -522,7 +523,14 @@ def open_bpla_panoramas_object_card(app: Application) -> None:
 def select_next_frame(app: Application) -> None:
     with allure.step('Selecting next frame'):
         try:
-            #  как-то переключить кадр
+            page = BplaObjectCardPage(app)
+            ac = ActionChains(app.driver)  # type: ignore[no-untyped-call]
+            ac.move_to_element(page.right_arrow.webelement).click_and_hold().perform()  # type: ignore[no-untyped-call]
+            sleep(2)
+            ac.move_to_element(page.right_arrow.webelement).click().perform()  # type: ignore[no-untyped-call]
+            opacity_string = page.opacity.webelement.get_attribute('style')
+
+            page.check_frame_movement(opacity_string)
 
             screenshot_attach(app, 'next_frame')
         except Exception as e:

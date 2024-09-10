@@ -19,7 +19,7 @@ __all__ = ['MapPage']
 
 class MapPage(Page):
     loader = Component(class_name='loader')
-    sidebar = Menu(css='[class*="sidebar "]')
+    menu = Menu(css='[class*="sidebar "]')
     top_buttons = TopButtons(css='[class*="map-buttons top"]')
     right_buttons = RightButtons(css='[class*="map-buttons right"]')
     map = Component(class_name='mapboxgl-canvas')
@@ -125,7 +125,7 @@ class MapPage(Page):
         def condition() -> bool:
             try:
                 assert self.loader_is_hidden
-                assert self.sidebar.visible
+                assert self.menu.visible
                 assert self.top_buttons.visible
                 assert self.map.visible
 
@@ -281,4 +281,24 @@ class MapPage(Page):
 
         self.app.set_implicitly_wait(1)
         wait_for(condition, msg='Ориентация карты не вернулась в исходное положение')
+        self.app.restore_implicitly_wait()
+
+    def wait_for_loading_ortophoto(self) -> None:
+        def condition() -> bool:
+            try:
+                content = self.driver.execute_script(
+                    "return window.getComputedStyle(arguments[0],':after').getPropertyValue('content')",
+                    self.menu.orthophoto.webelement,
+                )
+
+                assert content is not None
+
+                return self.loader_is_hidden
+
+            except NoSuchElementException:
+
+                return False
+
+        self.app.set_implicitly_wait(1)
+        wait_for(condition, timeout=70, msg='Подложка "Ортофотоплан" не загружена')
         self.app.restore_implicitly_wait()

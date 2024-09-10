@@ -32,7 +32,7 @@ class Layers(Component):
 
 class MenuWrapper(ComponentWrapper):
     interface = Component(css='[class*="icon-alt-map"]')
-    orthophoto = Component(css='[class*="orto"]')
+    orthophoto = Component(xpath='//div[contains(@class, "orto")]/ancestor::label')
     layers = Layers(tag='gis-plugin-layers-tree-tab')
     search = TextField(xpath='//input[@placeholder="Поиск"]')
     address = Components(xpath='//b[text()="Город Москва, Красная площадь, дом 1"]')

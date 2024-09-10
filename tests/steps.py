@@ -235,10 +235,10 @@ def select_ortophoto(app: Application) -> None:
     with allure.step('Selecting ortophoto'):
         try:
             page = MapPage(app)
-            page.sidebar.interface.click()
-            page.sidebar.orthophoto.click()
+            page.menu.interface.click()
+            page.menu.orthophoto.click()
 
-            # Как-то тут проверить, что подложка изменилась
+            page.wait_for_loading_ortophoto()
 
             screenshot_attach(app, 'ortophoto')
         except Exception as e:
@@ -251,8 +251,8 @@ def select_control_orders_layer(app: Application, zoom_value: str) -> None:
     with allure.step('Selecting control orders layer'):
         try:
             page = MapPage(app)
-            page.sidebar.layers.mayors_instructions.click()
-            page.sidebar.layers.control_orders.click()
+            page.menu.layers.mayors_instructions.click()
+            page.menu.layers.control_orders.click()
             page.zoom_in_map(zoom_value)
 
             screenshot_attach(app, 'control_orders_layer')
@@ -358,13 +358,13 @@ def open_cameras_layer(app: Application, zoom_value: str) -> None:
     with allure.step('Opening cameras layer'):
         try:
             page = MapPage(app)
-            page.sidebar.search.send_keys('Город Москва, Красная площадь, дом 1')
-            page.sidebar.address[-1].click()
+            page.menu.search.send_keys('Город Москва, Красная площадь, дом 1')
+            page.menu.address[-1].click()
 
-            page.sidebar.layers.video_cameras.click()
-            page.sidebar.layers.contract_cameras.click()
-            page.sidebar.layers.public_places.click()
-            page.sidebar.layers.broadcast_is_on.click()
+            page.menu.layers.video_cameras.click()
+            page.menu.layers.contract_cameras.click()
+            page.menu.layers.public_places.click()
+            page.menu.layers.broadcast_is_on.click()
             page.zoom_in_map(zoom_value)
 
             screenshot_attach(app, 'cameras_layer')
@@ -408,8 +408,8 @@ def open_bpla_video_layer(app: Application) -> None:
     with allure.step('Opening BPLA video layer'):
         try:
             page = MapPage(app)
-            page.sidebar.layers.aerial_photography.click()
-            page.sidebar.layers.bpla_video.click()
+            page.menu.layers.aerial_photography.click()
+            page.menu.layers.bpla_video.click()
 
             page.wait_for_loading_map_layer()
 
@@ -476,8 +476,8 @@ def open_bpla_panoramas_layer(app: Application) -> None:
     with allure.step('Opening BPLA panoramas layer'):
         try:
             page = MapPage(app)
-            page.sidebar.layers.aerial_photography.click()
-            page.sidebar.layers.bpla_panoramas.click()
+            page.menu.layers.aerial_photography.click()
+            page.menu.layers.bpla_panoramas.click()
 
             page.wait_for_loading_map_layer()
 
